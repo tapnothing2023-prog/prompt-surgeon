@@ -1,106 +1,153 @@
 # ✂️ Prompt Surgeon
 
-**Cut the fluff. Sharpen your prompts.**
+**Cut the fluff. Sharpen your prompts.** Works with any LLM — local or cloud. Open source (MIT).
 
-A prompt engineering tool that rewrites your prompts for clarity, conciseness, structure, or creativity — using any LLM you configure. Works as a Hermes Agent skill, a standalone CLI, and a web UI.
+---
 
-## Why
+## 🚀 Quick Install
 
-Most people write prompts that are too vague, too verbose, or poorly structured. This costs tokens (money) and produces weak outputs. Prompt Surgeon fixes that in one call.
-
-## How It Works
-
-```
-"Write a blog about AI for beginners"
-        ↓  (concise mode)
-"Write a 500-word blog introducing AI concepts to non-technical readers. Include: definition, real-world examples, and learning resources. Target audience: professionals with no ML background."
-```
-
-## Features
-
-- **Four modes**: Clarity (🎯), Concise (✂️), Structured (📋), Creative (✨)
-- **Zero additional cost** — uses your existing model (local Qwen = free, cloud models = pennies)
-- **Works everywhere**: Hermes Agent, CLI, or web browser
-- **Open source** (MIT) — no vendor lock-in, no subscription
-
-## Installation & Usage
-
-### Hermes Agent (skill)
+### Option 1: Hermes Agent (easiest — 10 seconds)
 
 ```bash
 hermes skills install prompt-surgeon
 ```
 
-Then in any session:
+Then in any chat session:
 
 ```
-Surgeon this for clarity: "write about AI agents"
-Make this concise: [paste prompt]
-Structured mode: [paste prompt]
+Surgeon this: "Write a blog about AI"
+Make it concise: [paste your prompt]
+Structured mode: [paste your prompt]
 ```
 
-### CLI
+### Option 2: CLI (any terminal — 30 seconds)
 
 ```bash
-pip install prompt-surgeon
+# Download
+curl -sOL https://raw.githubusercontent.com/tapnothing2023-prog/prompt-surgeon/main/cli/prompt_surgeon.py
+chmod +x prompt_surgeon.py
 
-# Default mode (clarity)
-prompt-surgeon "Write a blog post about AI"
+# Set your API key (get one free at https://openrouter.ai/keys)
+export OPENROUTER_API_KEY="sk-or-v1-..."
 
-# Specific mode
-prompt-surgeon --mode concise "Explain machine learning"
-prompt-surgeon --mode structured "Build a recommendation system"
-
-# Use a custom model
-prompt-surgeon --model qwen3.6 --mode creative "Write a sci-fi story"
+# Use it
+./prompt_surgeon.py "Write a blog about AI" --mode concise
 ```
 
-### Web UI
+Or pipe text:
 
 ```bash
-# Deploy anywhere (Vercel, Netlify, static hosting)
-cd web/
-python3 -m http.server 8080
-# → http://localhost:8080
+cat my_prompt.txt | ./prompt_surgeon.py --pipe --mode structured
 ```
 
-## API (for integration)
+### Option 3: Web UI (no install — 2 seconds)
 
-```
-POST /api/improve
-{
-  "prompt": "your prompt here",
-  "mode": "clarity|concise|structured|creative",
-  "model": "optional model override"
-}
-```
-
-## Modes
-
-| Mode | System Prompt | Best For |
-|------|--------------|----------|
-| **clarity** | Eliminate ambiguity, make specifics explicit | Complex instructions, multi-step tasks |
-| **concise** | Strip fluff, preserve all key constraints | Token optimization, cost saving |
-| **structured** | ROLE / TASK / CONSTRAINTS / OUTPUT format | Developer prompts, API usage |
-| **creative** | Open-ended framing, metaphorical language | Brainstorming, content creation |
-
-## Cost
-
-- **Local models** (Qwen, Llama via Ollama): $0
-- **Cloud models** (DeepSeek, Claude, GPT via your key): ~$0.0002 per improvement
-
-## Architecture
-
-```
-User Input → Prompt Surgeon Engine → Your LLM (any provider) → Improved Prompt
-```
-
-The engine is a system prompt + structured call to your existing model. No external services, no data leakage, no subscription.
-
-## License
-
-MIT — free to use, modify, distribute. Go build.
+1. Go to **https://prompt-surgeon.vercel.app**
+2. Paste your API key from https://openrouter.ai/keys
+3. Paste your prompt and click **Improve**
 
 ---
 
-Built by RED for the brotherhood. Open source for everyone.
+## 🎯 How To Use
+
+### Modes
+
+| Mode | What It Does | When To Use |
+|------|-------------|-------------|
+| **🎯 Clarity** | Removes vague language. Makes instructions explicit. | Complex tasks, multi-step instructions |
+| **✂️ Concise** | Cuts fluff. Keeps all key info. | Saving tokens, tight prompts |
+| **📋 Structured** | Formats as ROLE / TASK / CONSTRAINTS / OUTPUT | Developer prompts, API calls |
+| **✨ Creative** | Opens up framing for unexpected outputs | Brainstorming, content creation |
+
+### Examples
+
+**Before (vague):**
+```
+Write something about AI agents
+```
+
+**After (Clarity mode):**
+```
+Write a 500-word blog post introducing AI agents to non-technical readers.
+Include: definition, 3 real-world examples, and common misconceptions.
+Target audience: professionals with no machine learning background.
+```
+
+**Before (verbose):**
+```
+I would like you to please write a really good blog post about artificial intelligence agents and how they work and what they can do for people, make it engaging and fun to read okay thanks
+```
+
+**After (Concise mode):**
+```
+Write an engaging 400-word blog post about AI agents: how they work, what they do, and why they matter. Target: general audience. No jargon.
+```
+
+---
+
+## 💰 Cost
+
+- **Local models** (Qwen, Llama via Ollama): **$0 forever**
+- **Cloud models** (OpenRouter): ~$0.0002 per improvement — $1 = ~5,000 improvements
+- **Your API key, your cost, your control** — no subscriptions, no surprises
+
+---
+
+## 🧠 How It Works
+
+```
+You paste a prompt → Prompt Surgeon adds a specialist system prompt → Your LLM rewrites it → You get a sharper version
+```
+
+The "surgeon" is just a smart system prompt — no data leaves your model, no servers store your prompts, no tracking.
+
+---
+
+## 🔧 Advanced
+
+### Use any model
+
+```bash
+# CLI — specify model
+./prompt_surgeon.py "Explain quantum computing" --mode structured --model claude-sonnet-4
+
+# CLI — use local Qwen (free)
+./prompt_surgeon.py "Write a poem" --mode creative --model qwen3.6 --base-url http://localhost:11434/v1
+```
+
+### Web UI — run locally
+
+```bash
+git clone https://github.com/tapnothing2023-prog/prompt-surgeon.git
+cd prompt-surgeon/web
+python3 -m http.server 8080
+# Open http://localhost:8080
+```
+
+---
+
+## 📦 What's Included
+
+```
+prompt-surgeon/
+├── cli/prompt_surgeon.py      # CLI tool (works anywhere)
+├── web/
+│   ├── index.html             # Web UI (single HTML file)
+│   └── api/improve.js         # Serverless function (Vercel)
+├── README.md                  # This file
+└── LICENSE                    # MIT — do whatever you want
+```
+
+---
+
+## 🌐 Links
+
+- **Web UI:** https://prompt-surgeon.vercel.app
+- **GitHub:** https://github.com/tapnothing2023-prog/prompt-surgeon
+- **Hermes skill:** `hermes skills install prompt-surgeon`
+- **Get API key:** https://openrouter.ai/keys
+- **License:** MIT — free to use, modify, share
+
+---
+
+Built for the brotherhood. Open source for everyone.
